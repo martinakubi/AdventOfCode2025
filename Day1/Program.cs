@@ -1,52 +1,68 @@
-﻿using System.IO;
-
-Console.WriteLine("Hello, World!");
-
-int startingPoint = 50;
-
-int maxValue = 99;
-
-int minValue = 0;
+﻿int startingPoint = 50;
 
 int numberOfZeroPoints = 0;
 
-
 foreach (string line in File.ReadLines("txt.txt"))
 {
-    string direction = line.Substring(0,1);
-    string number = line[1..];
+    string direction = line.Substring(0, 1);
+    int delta = int.Parse(line[1..]);
 
-    int.TryParse(number, out int distance);
+    int number = ChooceRotation(direction, delta);
 
-    int newPoint = ChooceRotationsAndMakeStep(direction, distance, startingPoint);
+    int newPoint = startingPoint + number;
+
+    numberOfZeroPoints += ZeroPoints(startingPoint, number);
 
     startingPoint = Normalize(newPoint);
-
-    if(startingPoint== 0)
-    {
-        numberOfZeroPoints++;
-    }
 }
-Console.WriteLine($"Password to open the door: {numberOfZeroPoints.ToString()}");
+Console.WriteLine($"Pocet zastaveni na nule: {numberOfZeroPoints}");
+
 Console.ReadLine();
 
-static int ChooceRotationsAndMakeStep (string rotation, int step, int startingPoint)
+static int ChooceRotation (string rotation, int step)
 {
     if(rotation == "R")
     {
-        startingPoint += step;
+        return step;
     }
     else
     {
-        startingPoint -= step;
+        return -step;
     }
-
-    return startingPoint;
 }
 
 static int Normalize(int number)
 {
     return (number % 100 + 100) % 100;
+}
+
+static int ZeroPoints (int startingPoint, int step)
+{
+    int newPoint = startingPoint + step;
+
+    if (step > 0)
+    {
+        return newPoint / 100;
+    }
+    else
+    {
+        if (startingPoint == 0)
+        {
+            return -step / 100;
+        }
+        else
+        {
+            if (-step < startingPoint)
+            {
+                return 0;
+            }
+            else
+            {
+                return (-step - startingPoint) / 100 + 1;
+            }
+        }
+    }
+
 }
 
 
